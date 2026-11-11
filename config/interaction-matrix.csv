@@ -1,0 +1,65 @@
+source,destination,verdict
+Technology & Innovation,Technology & Innovation,same
+Technology & Innovation,Executive & Strategic Planning,l2
+Technology & Innovation,Project Delivery & Operations,l2
+Technology & Innovation,Corporate Services,deny
+Technology & Innovation,Engineering & Design,deny
+Technology & Innovation,Maintenance & Support,deny
+Technology & Innovation,Web server,l2
+Technology & Innovation,Internet,allow
+Executive & Strategic Planning,Technology & Innovation,l2
+Executive & Strategic Planning,Executive & Strategic Planning,same
+Executive & Strategic Planning,Project Delivery & Operations,l2
+Executive & Strategic Planning,Corporate Services,allow
+Executive & Strategic Planning,Engineering & Design,deny
+Executive & Strategic Planning,Maintenance & Support,deny
+Executive & Strategic Planning,Web server,l2
+Executive & Strategic Planning,Internet,allow
+Project Delivery & Operations,Technology & Innovation,l2
+Project Delivery & Operations,Executive & Strategic Planning,l2
+Project Delivery & Operations,Project Delivery & Operations,same
+Project Delivery & Operations,Corporate Services,deny
+Project Delivery & Operations,Engineering & Design,allow
+Project Delivery & Operations,Maintenance & Support,allow
+Project Delivery & Operations,Web server,l2
+Project Delivery & Operations,Internet,allow
+Corporate Services,Technology & Innovation,deny
+Corporate Services,Executive & Strategic Planning,allow
+Corporate Services,Project Delivery & Operations,deny
+Corporate Services,Corporate Services,same
+Corporate Services,Engineering & Design,l2
+Corporate Services,Maintenance & Support,l2
+Corporate Services,Web server,implicit
+Corporate Services,Internet,implicit
+Engineering & Design,Technology & Innovation,deny
+Engineering & Design,Executive & Strategic Planning,deny
+Engineering & Design,Project Delivery & Operations,allow
+Engineering & Design,Corporate Services,l2
+Engineering & Design,Engineering & Design,same
+Engineering & Design,Maintenance & Support,l2
+Engineering & Design,Web server,implicit
+Engineering & Design,Internet,implicit
+Maintenance & Support,Technology & Innovation,deny
+Maintenance & Support,Executive & Strategic Planning,deny
+Maintenance & Support,Project Delivery & Operations,allow
+Maintenance & Support,Corporate Services,l2
+Maintenance & Support,Engineering & Design,l2
+Maintenance & Support,Maintenance & Support,same
+Maintenance & Support,Web server,implicit
+Maintenance & Support,Internet,implicit
+Web server,Technology & Innovation,l2
+Web server,Executive & Strategic Planning,l2
+Web server,Project Delivery & Operations,l2
+Web server,Corporate Services,implicit
+Web server,Engineering & Design,implicit
+Web server,Maintenance & Support,implicit
+Web server,Web server,same
+Web server,Internet,implicit
+Internet,Technology & Innovation,implicit
+Internet,Executive & Strategic Planning,implicit
+Internet,Project Delivery & Operations,implicit
+Internet,Corporate Services,implicit
+Internet,Engineering & Design,implicit
+Internet,Maintenance & Support,implicit
+Internet,Web server,verify
+Internet,Internet,same

@@ -1,0 +1,706 @@
+{
+  "meta": {
+    "organisation": "Kaisa Incorporated",
+    "title": "Enterprise Firewall Policy Implementation",
+    "subtitle": "Part B · Local-FortiGate · FortiOS 7.4.4",
+    "hostname": "Local-FortiGate",
+    "model": "FortiGate-VM64",
+    "firmware": "v7.4.4 build2662",
+    "exportDate": "2026-10-16",
+    "scope": "Department segmentation, internet filtering, NAT and QoS on the Local-FortiGate only.",
+    "repo": "kaisa-firewall-report",
+    "source": "Local-FortiGate 7.4.4 configuration export, sanitised",
+    "policyCount": 18,
+    "denyCount": 8,
+    "acceptCount": 10,
+    "note": "Object names follow the exported configuration. Verification flags mark interface mismatches recorded in docs/07-verification-notes.md."
+  },
+  "interfaces": [
+    {
+      "name": "port1",
+      "ip": "10.200.1.1/24",
+      "role": "Trusted management / backup segment",
+      "access": "ping, https, ssh, http, fgfm"
+    },
+    {
+      "name": "port2",
+      "ip": "10.200.2.1/24",
+      "role": "Internet-facing segment to the Linux router 10.200.2.254",
+      "access": "ping, https, ssh, http"
+    },
+    {
+      "name": "port3",
+      "ip": "10.0.1.254/24",
+      "role": "Internal LAN: Local-Client, web server, ISFW",
+      "access": "https, ssh, http"
+    },
+    {
+      "name": "port8",
+      "ip": "172.16.100.3/24",
+      "role": "Out-of-band management (unchanged)",
+      "access": "ping, https, ssh, http, fgfm"
+    }
+  ],
+  "departments": [
+    {
+      "id": "TI",
+      "name": "Technology & Innovation",
+      "short": "Tech & Innovation",
+      "ip": "10.0.1.10",
+      "segment": "port3",
+      "subnet": "10.0.1.0/24",
+      "colour": "#36d6c3"
+    },
+    {
+      "id": "EX",
+      "name": "Executive & Strategic Planning",
+      "short": "Executive",
+      "ip": "10.0.1.30",
+      "segment": "port3",
+      "subnet": "10.0.1.0/24",
+      "colour": "#a78bfa"
+    },
+    {
+      "id": "PD",
+      "name": "Project Delivery & Operations",
+      "short": "Project Delivery",
+      "ip": "10.0.1.40",
+      "segment": "port3",
+      "subnet": "10.0.1.0/24",
+      "colour": "#5aa6ff"
+    },
+    {
+      "id": "CS",
+      "name": "Corporate Services",
+      "short": "Corporate Services",
+      "ip": "10.200.1.150",
+      "segment": "port1",
+      "subnet": "10.200.1.0/24",
+      "colour": "#f6b73c"
+    },
+    {
+      "id": "ED",
+      "name": "Engineering & Design",
+      "short": "Engineering",
+      "ip": "10.200.1.241",
+      "segment": "port1",
+      "subnet": "10.200.1.0/24",
+      "colour": "#ff8fab"
+    },
+    {
+      "id": "MS",
+      "name": "Maintenance & Support",
+      "short": "Maintenance",
+      "ip": "10.200.1.210",
+      "segment": "port1",
+      "subnet": "10.200.1.0/24",
+      "colour": "#ff5d73"
+    }
+  ],
+  "server": {
+    "id": "SRV",
+    "name": "Internal web server",
+    "ip": "10.0.1.20",
+    "segment": "port3",
+    "subnet": "10.0.1.0/24"
+  },
+  "groups": {
+    "GRP_TI_BLOCKED": [
+      "CS",
+      "ED",
+      "MS"
+    ],
+    "GRP_CS_BLOCKED": [
+      "PD",
+      "ED",
+      "MS"
+    ],
+    "GRP_ED_BLOCKED": [
+      "EX",
+      "MS"
+    ],
+    "GRP_ALL_DEPARTMENT": [
+      "TI",
+      "EX",
+      "PD",
+      "CS",
+      "ED",
+      "MS"
+    ]
+  },
+  "schedules": {
+    "always": {
+      "label": "Always",
+      "days": "Mon–Sun",
+      "time": "00:00–24:00"
+    },
+    "WORK_HOUR_AM": {
+      "label": "Work hours · AM",
+      "days": "Mon–Fri",
+      "time": "08:00–12:00"
+    },
+    "WORK_HOUR_PM": {
+      "label": "Work hours · PM",
+      "days": "Mon–Fri",
+      "time": "13:00–17:00"
+    },
+    "BREAK": {
+      "label": "Lunch break",
+      "days": "Mon–Fri",
+      "time": "12:00–13:00"
+    }
+  },
+  "profiles": {
+    "web": [
+      {
+        "name": "WF_KAISA_WorkHours",
+        "applies": "ALLOW_INTERNET_WORKHOURS_AM / PM",
+        "entries": [
+          {
+            "label": "Social Networking",
+            "action": "block"
+          },
+          {
+            "label": "Games / Gambling",
+            "action": "block"
+          },
+          {
+            "label": "Adult / Mature Content",
+            "action": "block"
+          },
+          {
+            "label": "Malicious Websites / Phishing / Spam / Newly Registered Domains",
+            "action": "block"
+          },
+          {
+            "label": "Streaming Media / Peer-to-peer File Sharing",
+            "action": "block"
+          },
+          {
+            "label": "Hacking / Proxy Avoidance / Illegal or Unethical",
+            "action": "block"
+          },
+          {
+            "label": "Finance and Banking",
+            "action": "allow"
+          },
+          {
+            "label": "Education / Information Technology / Business / Technology",
+            "action": "allow"
+          },
+          {
+            "label": "Government / Health / News and Media",
+            "action": "allow"
+          },
+          {
+            "label": "Safe Search enforcement (Google, Bing, YouTube, Yahoo, Yandex)",
+            "action": "enforce"
+          }
+        ]
+      },
+      {
+        "name": "WF_KAISA_Break",
+        "applies": "ALLOW_INTERNET_BREAK",
+        "entries": [
+          {
+            "label": "Social Networking",
+            "action": "allow"
+          },
+          {
+            "label": "All other categories",
+            "action": "same-as-work"
+          }
+        ]
+      }
+    ],
+    "app": [
+      {
+        "label": "P2P / BitTorrent",
+        "action": "block"
+      },
+      {
+        "label": "Proxy / VPN and Anonymiser",
+        "action": "block"
+      },
+      {
+        "label": "Remote Access (TeamViewer, AnyDesk, LogMeIn)",
+        "action": "block"
+      },
+      {
+        "label": "Games",
+        "action": "block"
+      },
+      {
+        "label": "Botnet / High risk / Unknown risk",
+        "action": "block"
+      },
+      {
+        "label": "Office 365 / Google Workspace / Microsoft Teams / Zoom / Webex",
+        "action": "allow"
+      },
+      {
+        "label": "Business / Update",
+        "action": "allow"
+      }
+    ],
+    "shapers": [
+      {
+        "name": "SHAPER_BUSINESS",
+        "type": "Shared shaper",
+        "guaranteed": "20,000 Kbps",
+        "maximum": "100,000 Kbps",
+        "priority": "High",
+        "applies": "Internet policies"
+      },
+      {
+        "name": "SHAPER_NONWORK",
+        "type": "Shared shaper",
+        "guaranteed": "1 Kbps",
+        "maximum": "5,000 Kbps",
+        "priority": "Low",
+        "applies": "TSP_NonWork · social media / video"
+      }
+    ]
+  },
+  "policies": [
+    {
+      "id": 2,
+      "name": "DENY_BLOCKED_TO_TI",
+      "action": "deny",
+      "control": "C1",
+      "src": [
+        "CS",
+        "ED",
+        "MS"
+      ],
+      "dst": [
+        "TI"
+      ],
+      "srcLabel": "GRP_TI_BLOCKED",
+      "dstLabel": "Tech_Innovation",
+      "srcintf": "port1",
+      "dstintf": "port3",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": false,
+      "profiles": [],
+      "category": "Department isolation",
+      "justification": "Blocks reverse-direction access to the innovation zone from the three unauthorised departments."
+    },
+    {
+      "id": 3,
+      "name": "DENY_TI_TO_P1",
+      "action": "deny",
+      "control": "C1",
+      "src": [
+        "TI"
+      ],
+      "dst": [
+        "CS",
+        "ED",
+        "MS"
+      ],
+      "srcLabel": "Tech_Innovation",
+      "dstLabel": "GRP_TI_BLOCKED",
+      "srcintf": "port3",
+      "dstintf": "port1",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": false,
+      "profiles": [],
+      "category": "Department isolation",
+      "justification": "Restricts Technology & Innovation access to the corporate, engineering and maintenance segments."
+    },
+    {
+      "id": 4,
+      "name": "DENY_CS_TO_BLOCKED",
+      "action": "deny",
+      "control": "C2",
+      "src": [
+        "CS"
+      ],
+      "dst": [
+        "PD",
+        "ED",
+        "MS"
+      ],
+      "srcLabel": "Corporate_Services",
+      "dstLabel": "GRP_CS_BLOCKED",
+      "srcintf": "port1",
+      "dstintf": "port3",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": false,
+      "profiles": [],
+      "category": "Department isolation",
+      "justification": "Limits Corporate Services access to approved partners and protects delivery, engineering and maintenance."
+    },
+    {
+      "id": 5,
+      "name": "DENY_BLOCKED_TO_CS",
+      "action": "deny",
+      "control": "C2",
+      "src": [
+        "PD",
+        "ED",
+        "MS"
+      ],
+      "dst": [
+        "CS"
+      ],
+      "srcLabel": "GRP_CS_BLOCKED",
+      "dstLabel": "Corporate_Services",
+      "srcintf": "port3",
+      "dstintf": "port1",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": false,
+      "profiles": [],
+      "category": "Department isolation",
+      "justification": "Blocks unauthorised access to Corporate Services in the reverse direction."
+    },
+    {
+      "id": 6,
+      "name": "DENY_ED_TO_BLOCKED",
+      "action": "deny",
+      "control": "C3",
+      "src": [
+        "ED"
+      ],
+      "dst": [
+        "EX",
+        "MS"
+      ],
+      "srcLabel": "Engineering_Design",
+      "dstLabel": "GRP_ED_BLOCKED",
+      "srcintf": "port1",
+      "dstintf": "port3",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": false,
+      "profiles": [],
+      "category": "Department isolation",
+      "justification": "Restricts Engineering & Design access to the executive and maintenance segments."
+    },
+    {
+      "id": 7,
+      "name": "DENY_BLOCKED_TO_ED",
+      "action": "deny",
+      "control": "C3",
+      "src": [
+        "EX",
+        "MS"
+      ],
+      "dst": [
+        "ED"
+      ],
+      "srcLabel": "GRP_ED_BLOCKED",
+      "dstLabel": "Engineering_Design",
+      "srcintf": "port3",
+      "dstintf": "port1",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": false,
+      "profiles": [],
+      "category": "Department isolation",
+      "justification": "Blocks reverse-direction access to protect engineering data and intellectual property."
+    },
+    {
+      "id": 8,
+      "name": "DENY_EX_TO_MS",
+      "action": "deny",
+      "control": "C4",
+      "src": [
+        "EX"
+      ],
+      "dst": [
+        "MS"
+      ],
+      "srcLabel": "Executive_Strategy",
+      "dstLabel": "Maintenance_Strategy",
+      "srcintf": "port3",
+      "dstintf": "port1",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": false,
+      "profiles": [],
+      "category": "Department isolation",
+      "justification": "Separates Executive & Strategic Planning from Maintenance & Support."
+    },
+    {
+      "id": 9,
+      "name": "DENY_MS_TO_EX",
+      "action": "deny",
+      "control": "C4",
+      "src": [
+        "MS"
+      ],
+      "dst": [
+        "EX"
+      ],
+      "srcLabel": "Maintenance_Strategy",
+      "dstLabel": "Executive_Strategy",
+      "srcintf": "port1",
+      "dstintf": "port3",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": false,
+      "profiles": [],
+      "category": "Department isolation",
+      "justification": "Prevents maintenance systems from initiating access to executive systems."
+    },
+    {
+      "id": 10,
+      "name": "ALLOW_EX_TO_CS",
+      "action": "accept",
+      "control": "C5",
+      "src": [
+        "EX"
+      ],
+      "dst": [
+        "CS"
+      ],
+      "srcLabel": "Executive_Strategy",
+      "dstLabel": "Corporate_Services",
+      "srcintf": "port3",
+      "dstintf": "port1",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": true,
+      "profiles": [],
+      "category": "Approved collaboration",
+      "justification": "Allows Executive & Strategic Planning to reach Corporate Services for governance and reporting."
+    },
+    {
+      "id": 11,
+      "name": "ALLOW_CS_TO_EX",
+      "action": "accept",
+      "control": "C5",
+      "src": [
+        "CS"
+      ],
+      "dst": [
+        "EX"
+      ],
+      "srcLabel": "Corporate_Services",
+      "dstLabel": "Executive_Strategy",
+      "srcintf": "port1",
+      "dstintf": "port3",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": true,
+      "profiles": [],
+      "category": "Approved collaboration",
+      "justification": "Allows the return path for Corporate Services to Executive & Strategic Planning."
+    },
+    {
+      "id": 12,
+      "name": "ALLOW_PD_TO_ED",
+      "action": "accept",
+      "control": "C5",
+      "src": [
+        "PD"
+      ],
+      "dst": [
+        "ED"
+      ],
+      "srcLabel": "Project_Delivery",
+      "dstLabel": "Engineering_Design",
+      "srcintf": "port3",
+      "dstintf": "port1",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": true,
+      "profiles": [],
+      "category": "Approved collaboration",
+      "justification": "Allows Project Delivery to collaborate with Engineering & Design."
+    },
+    {
+      "id": 13,
+      "name": "ALLOW_ED_TO_PD",
+      "action": "accept",
+      "control": "C5",
+      "src": [
+        "ED"
+      ],
+      "dst": [
+        "PD"
+      ],
+      "srcLabel": "Engineering_Design",
+      "dstLabel": "Project_Delivery",
+      "srcintf": "port1",
+      "dstintf": "port3",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": true,
+      "profiles": [],
+      "category": "Approved collaboration",
+      "justification": "Allows the return path from Engineering & Design to Project Delivery."
+    },
+    {
+      "id": 14,
+      "name": "ALLOW_PD_TO_MS",
+      "action": "accept",
+      "control": "C5",
+      "src": [
+        "PD"
+      ],
+      "dst": [
+        "MS"
+      ],
+      "srcLabel": "Project_Delivery",
+      "dstLabel": "Maintenance_Strategy",
+      "srcintf": "port3",
+      "dstintf": "port1",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": true,
+      "profiles": [],
+      "category": "Approved collaboration",
+      "justification": "Allows Project Delivery to communicate with Maintenance & Support."
+    },
+    {
+      "id": 15,
+      "name": "ALLOW_MS_TO_PD",
+      "action": "accept",
+      "control": "C5",
+      "src": [
+        "MS"
+      ],
+      "dst": [
+        "PD"
+      ],
+      "srcLabel": "Maintenance_Strategy",
+      "dstLabel": "Project_Delivery",
+      "srcintf": "port1",
+      "dstintf": "port3",
+      "schedule": "always",
+      "service": "ALL",
+      "nat": true,
+      "profiles": [],
+      "category": "Approved collaboration",
+      "justification": "Allows the return path from Maintenance & Support to Project Delivery."
+    },
+    {
+      "id": 16,
+      "name": "ALLOW_INTERNET_WORKHOURS_AM",
+      "action": "accept",
+      "control": "C6",
+      "src": [
+        "TI",
+        "EX",
+        "PD",
+        "CS",
+        "ED",
+        "MS"
+      ],
+      "dst": [
+        "NET"
+      ],
+      "srcLabel": "GRP_ALL_DEPARTMENT",
+      "dstLabel": "all",
+      "srcintf": "port3",
+      "dstintf": "port2",
+      "schedule": "WORK_HOUR_AM",
+      "service": "ALL",
+      "nat": true,
+      "snat": "IPPOOL_KAISA_SNAT",
+      "profiles": [
+        "WF_KAISA_WorkHours",
+        "AC_KAISA",
+        "SHAPER_BUSINESS"
+      ],
+      "category": "Internet access",
+      "justification": "Work-hours internet access with web filtering, application control and business traffic shaping."
+    },
+    {
+      "id": 17,
+      "name": "ALLOW_INTERNET_WORKHOURS_PM",
+      "action": "accept",
+      "control": "C6",
+      "src": [
+        "TI",
+        "EX",
+        "PD",
+        "CS",
+        "ED",
+        "MS"
+      ],
+      "dst": [
+        "NET"
+      ],
+      "srcLabel": "GRP_ALL_DEPARTMENT",
+      "dstLabel": "all",
+      "srcintf": "port3",
+      "dstintf": "port1",
+      "schedule": "WORK_HOUR_PM",
+      "service": "ALL",
+      "nat": true,
+      "snat": "IPPOOL_KAISA_SNAT",
+      "profiles": [
+        "WF_KAISA_WorkHours",
+        "AC_KAISA",
+        "SHAPER_BUSINESS"
+      ],
+      "category": "Internet access",
+      "justification": "Afternoon work-hours internet access. The export shows port1 as the outgoing interface; the design expects port2.",
+      "audit": "dstintf"
+    },
+    {
+      "id": 18,
+      "name": "ALLOW_INTERNET_BREAK",
+      "action": "accept",
+      "control": "C7",
+      "src": [
+        "TI",
+        "EX",
+        "PD",
+        "CS",
+        "ED",
+        "MS"
+      ],
+      "dst": [
+        "NET"
+      ],
+      "srcLabel": "GRP_ALL_DEPARTMENT",
+      "dstLabel": "all",
+      "srcintf": "port3",
+      "dstintf": "port2",
+      "schedule": "BREAK",
+      "service": "ALL",
+      "nat": true,
+      "snat": "IPPOOL_KAISA_SNAT",
+      "profiles": [
+        "WF_KAISA_Break",
+        "AC_KAISA",
+        "SHAPER_BUSINESS"
+      ],
+      "category": "Internet access",
+      "justification": "Lunch-break internet access under a separate web-filter profile so social media is permitted only between 12:00 and 13:00."
+    },
+    {
+      "id": 19,
+      "name": "ALLOW_INBOUND_WEBSERVER",
+      "action": "accept",
+      "control": "C12",
+      "src": [
+        "NET"
+      ],
+      "dst": [
+        "SRV"
+      ],
+      "srcLabel": "all",
+      "dstLabel": "VIP_KAISA_WEBSERVER",
+      "srcintf": "port2",
+      "dstintf": "port1",
+      "schedule": "always",
+      "service": "HTTP, HTTPS",
+      "nat": true,
+      "vip": "VIP_KAISA_WEBSERVER",
+      "profiles": [],
+      "category": "Inbound publication",
+      "justification": "Publishes 10.0.1.20 through a static-NAT VIP: external TCP/8080 maps to internal TCP/80.",
+      "audit": "dstintf"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+# Operating system
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Local tooling
+node_modules/
+.env
+.env.*
+*.log
+
+# FortiGate backups and raw report artefacts — never commit these
+*.conf.bak
+*backup*.conf
+Local-FortiGate*.conf
+Local-FortiGate*.conf.txt
+*.docx
+*.pdf
+
+# Keep the explicitly sanitised configuration extract
+!config/kaisa-fortigate-sanitised.conf
+
+# Temporary files
+*.tmp
+*.temp
