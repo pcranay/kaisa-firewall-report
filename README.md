@@ -164,4 +164,4 @@ See [LICENSE](LICENSE).
 
 ---
 
-*Academic project. Not a production change record.*
+
